@@ -8,6 +8,8 @@ var checkServer = require('./network_simulation/lib/check_server');
 var nopt = require('nopt');
 var url = require('url');
 
+var requestCounts = {};
+
 var RequestData = function (request, response, buffer) {
   this.request = request;
   this.response = response;
@@ -28,13 +30,20 @@ var Queue = function (proxies, parameters) {
   this.parameters = parameters;
 };
 Queue.prototype.takeRequest = function (reqData) {
+  var ip = ipFromRequest(reqData);
+  if (requestCounts[ip] > 0) {
+    requestCounts[ip]++;
+  } else {
+    requestCounts[ip] = 1;
+  }
   // Reject traffic as necessary:
-  // if (currently_blacklisted(ipFromRequest(reqData))) {
-  //   rejectRequest(reqData);
-  //   return;
-  // }
+  if (requestCounts[ip] > 10) {
+    rejectRequest(reqData);
+    return;
+  }
   // Otherwise proxy it through:
   this.proxies[0].proxyRequest(reqData.request, reqData.response, reqData.buffer);
+  //console.log(requestCounts);
 };
 Queue.prototype.requestFinished = function () {
   return;
