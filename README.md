@@ -1,3 +1,10 @@
+## Solution
+
+Exploit the fact that the test uses a fixed number of requests (and many more for "elephants" than "mice"), and [limit each IP to 10 requests](https://github.com/danielfone/stripe-ctf-level2/commit/7f1171a8400c39ac691c54fa0cddbc9ea4202edb#diff-1).
+
+---
+
+
 # Level 2
 
 ## Getting started
